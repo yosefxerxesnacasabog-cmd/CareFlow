@@ -10,66 +10,99 @@
         MinWidth="530" MinHeight="420"
         x:CompileBindings="True">
 
-    <Grid Margin="24" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="14">
-        <TextBlock Text="Diagnostic booking" FontSize="22" FontWeight="SemiBold" />
+    <TabControl>
+        <TabItem Header="Book services">
+            <Grid Margin="24" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="14">
+                <TextBlock Text="Diagnostic booking" FontSize="22" FontWeight="SemiBold" />
 
-        <StackPanel Grid.Row="1" Spacing="4" IsEnabled="{Binding !IsConfirming}">
-            <StackPanel Orientation="Horizontal" Spacing="12">
-                <TextBlock Text="Patient" VerticalAlignment="Center" />
-                <ComboBox ItemsSource="{Binding Patients}"
-                          SelectedItem="{Binding SelectedPatient, Mode=TwoWay}"
-                          PlaceholderText="Select a patient" MinWidth="225"
-                          AutomationProperties.Name="Patient">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="models:Patient">
-                            <TextBlock Text="{Binding FullName}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </StackPanel>
-            <TextBlock Text="{Binding PatientMessage}" TextWrapping="Wrap" />
-        </StackPanel>
+                <StackPanel Grid.Row="1" Spacing="4" IsEnabled="{Binding !IsConfirming}">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Text="Patient" VerticalAlignment="Center" />
+                        <ComboBox ItemsSource="{Binding Patients}"
+                                  SelectedItem="{Binding SelectedPatient, Mode=TwoWay}"
+                                  PlaceholderText="Select a patient" MinWidth="225"
+                                  AutomationProperties.Name="Patient">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:Patient">
+                                    <TextBlock Text="{Binding FullName}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <TextBlock Text="{Binding PatientMessage}" TextWrapping="Wrap" />
+                </StackPanel>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12" IsEnabled="{Binding !IsConfirming}">
-            <TextBlock Text="Booking date" VerticalAlignment="Center" />
-            <DatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
-                        AutomationProperties.Name="Booking date" />
-            <Button Content="Refresh" Command="{Binding RefreshAvailabilityCommand}" />
-        </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12" IsEnabled="{Binding !IsConfirming}">
+                    <TextBlock Text="Booking date" VerticalAlignment="Center" />
+                    <DatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                AutomationProperties.Name="Booking date" />
+                    <Button Content="Refresh" Command="{Binding RefreshAvailabilityCommand}" />
+                </StackPanel>
 
-        <Grid Grid.Row="3" ColumnDefinitions="*,130,120" ColumnSpacing="12">
-            <TextBlock Text="Select 1–3 diagnostic services" FontWeight="SemiBold" />
-            <TextBlock Grid.Column="1" Text="Daily capacity" FontWeight="SemiBold" />
-            <TextBlock Grid.Column="2" Text="Remaining slots" FontWeight="SemiBold" />
-        </Grid>
+                <Grid Grid.Row="3" ColumnDefinitions="*,130,120" ColumnSpacing="12">
+                    <TextBlock Text="Select 1–3 diagnostic services" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="Daily capacity" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="2" Text="Remaining slots" FontWeight="SemiBold" />
+                </Grid>
 
-        <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Spacing="8">
-                <TextBlock Text="{Binding AvailabilityMessage}" TextWrapping="Wrap" />
-                <ItemsControl ItemsSource="{Binding Availability}"
-                              IsVisible="{Binding !IsLoadingAvailability}"
-                              IsEnabled="{Binding !IsConfirming}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="vm:BookingServiceOption">
-                            <Grid ColumnDefinitions="*,130,120" ColumnSpacing="12" Margin="0,0,0,4">
-                                <CheckBox Content="{Binding Availability.Name}"
-                                          IsChecked="{Binding IsSelected, Mode=TwoWay}" />
-                                <TextBlock Grid.Column="1" Text="{Binding Availability.DailyCapacity}"
-                                           VerticalAlignment="Center" />
-                                <TextBlock Grid.Column="2" Text="{Binding Availability.RemainingSlots}"
-                                           VerticalAlignment="Center" />
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </ScrollViewer>
+                <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="{Binding AvailabilityMessage}" TextWrapping="Wrap" />
+                        <ItemsControl ItemsSource="{Binding Availability}"
+                                      IsVisible="{Binding !IsLoadingAvailability}"
+                                      IsEnabled="{Binding !IsConfirming}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:BookingServiceOption">
+                                    <Grid ColumnDefinitions="*,130,120" ColumnSpacing="12" Margin="0,0,0,4">
+                                        <CheckBox Content="{Binding Availability.Name}"
+                                                  IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Availability.DailyCapacity}"
+                                                   VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Availability.RemainingSlots}"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
 
-        <StackPanel Grid.Row="5" Spacing="8">
-            <Button Content="Confirm booking" Command="{Binding ConfirmBookingCommand}" />
-            <TextBlock Text="{Binding ValidationMessage}" TextWrapping="Wrap"
-                       AutomationProperties.LiveSetting="Polite" />
-        </StackPanel>
-    </Grid>
+                <StackPanel Grid.Row="5" Spacing="8">
+                    <Button Content="Confirm booking" Command="{Binding ConfirmBookingCommand}" />
+                    <TextBlock Text="{Binding ValidationMessage}" TextWrapping="Wrap"
+                               AutomationProperties.LiveSetting="Polite" />
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Booking history">
+            <Grid Margin="24" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="12">
+                <Button Content="Refresh history" Command="{Binding History.RefreshCommand}" />
+                <TextBlock Grid.Row="1" Text="{Binding History.Message}" TextWrapping="Wrap"
+                           AutomationProperties.LiveSetting="Polite" />
+
+                <Grid Grid.Row="2" ColumnDefinitions="75,*,105,2*" ColumnSpacing="10">
+                    <TextBlock Text="Booking #" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="Patient" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="2" Text="Date" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="3" Text="Diagnostic services" FontWeight="SemiBold" />
+                </Grid>
+
+                <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl ItemsSource="{Binding History.Entries}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:BookingHistoryEntry">
+                                <Grid ColumnDefinitions="75,*,105,2*" ColumnSpacing="10" Margin="0,0,0,12">
+                                    <TextBlock Text="{Binding BookingId}" />
+                                    <TextBlock Grid.Column="1" Text="{Binding PatientName}" TextWrapping="Wrap" />
+                                    <TextBlock Grid.Column="2" Text="{Binding BookingDate, StringFormat='{}{0:d}'}" />
+                                    <TextBlock Grid.Column="3" Text="{Binding ServiceNames}" TextWrapping="Wrap" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </TabItem>
+    </TabControl>
 
 </Window>

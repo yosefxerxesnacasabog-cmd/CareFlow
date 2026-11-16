@@ -25,6 +25,8 @@ public partial class App : Application
                 .AddSingleton<DiagnosticAvailabilityService>()
                 .AddSingleton<PatientLookupService>()
                 .AddSingleton<BookingConfirmationService>()
+                .AddSingleton<BookingHistoryService>()
+                .AddSingleton<BookingHistoryViewModel>()
                 .AddSingleton<MainViewModel>()
                 .AddSingleton<MainWindow>(provider => new MainWindow
                 {

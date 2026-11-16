@@ -15,9 +15,12 @@ namespace CareFlow.ViewModels;
 public partial class MainViewModel(
     DiagnosticAvailabilityService availabilityService,
     PatientLookupService patientLookupService,
-    BookingConfirmationService bookingConfirmationService) : ViewModelBase
+    BookingConfirmationService bookingConfirmationService,
+    BookingHistoryViewModel history) : ViewModelBase
 {
     private CancellationTokenSource? availabilityRequest;
+
+    public BookingHistoryViewModel History { get; } = history;
 
     [ObservableProperty]
     public partial DateTimeOffset? SelectedDate { get; set; } = DateTimeOffset.Now;
@@ -54,7 +57,7 @@ public partial class MainViewModel(
 
     partial void OnSelectedPatientChanged(Patient? value) => ValidationMessage = null;
 
-    public Task InitializeAsync() => Task.WhenAll(LoadPatientsAsync(), RefreshAvailabilityAsync());
+    public Task InitializeAsync() => Task.WhenAll(LoadPatientsAsync(), RefreshAvailabilityAsync(), History.RefreshAsync());
 
     private async Task LoadPatientsAsync()
     {
@@ -109,7 +112,8 @@ public partial class MainViewModel(
                 }
             }
 
-            await RefreshAvailabilityAsync();
+            var historyRefresh = result.BookingId.HasValue ? History.RefreshAsync() : Task.CompletedTask;
+            await Task.WhenAll(RefreshAvailabilityAsync(), historyRefresh);
             ValidationMessage = result.BookingId is { } bookingId
                 ? $"Booking #{bookingId} confirmed."
                 : result.ErrorMessage;
