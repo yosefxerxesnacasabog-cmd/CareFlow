@@ -23,6 +23,7 @@ public partial class App : Application
             var services = new ServiceCollection()
                 .AddDbContextFactory<CareFlowDbContext>(CareFlowDbContextFactory.ConfigureSqlite)
                 .AddSingleton<DiagnosticAvailabilityService>()
+                .AddSingleton<PatientLookupService>()
                 .AddSingleton<MainViewModel>()
                 .AddSingleton<MainWindow>(provider => new MainWindow
                 {

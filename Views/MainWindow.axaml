@@ -6,42 +6,69 @@
         x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="CareFlow"
-        Width="700" Height="450"
-        MinWidth="530" MinHeight="300"
+        Width="700" Height="500"
+        MinWidth="530" MinHeight="420"
         x:CompileBindings="True">
 
-    <Grid Margin="24" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="16">
-        <TextBlock Text="Diagnostic service availability" FontSize="22" FontWeight="SemiBold" />
+    <Grid Margin="24" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="14">
+        <TextBlock Text="Diagnostic booking" FontSize="22" FontWeight="SemiBold" />
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12">
-            <TextBlock Text="Date" VerticalAlignment="Center" />
+        <StackPanel Grid.Row="1" Spacing="4">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="Patient" VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{Binding Patients}"
+                          SelectedItem="{Binding SelectedPatient, Mode=TwoWay}"
+                          PlaceholderText="Select a patient" MinWidth="225"
+                          AutomationProperties.Name="Patient">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="models:Patient">
+                            <TextBlock Text="{Binding FullName}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+            <TextBlock Text="{Binding PatientMessage}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Booking date" VerticalAlignment="Center" />
             <DatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
-                        AutomationProperties.Name="Availability date" />
+                        AutomationProperties.Name="Booking date" />
             <Button Content="Refresh" Command="{Binding RefreshAvailabilityCommand}" />
         </StackPanel>
 
-        <Grid Grid.Row="2" ColumnDefinitions="*,130,120" ColumnSpacing="12">
-            <TextBlock Text="Diagnostic service" FontWeight="SemiBold" />
+        <Grid Grid.Row="3" ColumnDefinitions="*,130,120" ColumnSpacing="12">
+            <TextBlock Text="Select 1–3 diagnostic services" FontWeight="SemiBold" />
             <TextBlock Grid.Column="1" Text="Daily capacity" FontWeight="SemiBold" />
             <TextBlock Grid.Column="2" Text="Remaining slots" FontWeight="SemiBold" />
         </Grid>
 
-        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="8">
                 <TextBlock Text="{Binding AvailabilityMessage}" TextWrapping="Wrap" />
-                <ItemsControl ItemsSource="{Binding Availability}">
+                <ItemsControl ItemsSource="{Binding Availability}"
+                              IsVisible="{Binding !IsLoadingAvailability}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="models:DiagnosticServiceAvailability">
-                            <Grid ColumnDefinitions="*,130,120" ColumnSpacing="12" Margin="0,0,0,8">
-                                <TextBlock Text="{Binding Name}" TextWrapping="Wrap" />
-                                <TextBlock Grid.Column="1" Text="{Binding DailyCapacity}" />
-                                <TextBlock Grid.Column="2" Text="{Binding RemainingSlots}" />
+                        <DataTemplate x:DataType="vm:BookingServiceOption">
+                            <Grid ColumnDefinitions="*,130,120" ColumnSpacing="12" Margin="0,0,0,4">
+                                <CheckBox Content="{Binding Availability.Name}"
+                                          IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Availability.DailyCapacity}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" Text="{Binding Availability.RemainingSlots}"
+                                           VerticalAlignment="Center" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </StackPanel>
         </ScrollViewer>
+
+        <StackPanel Grid.Row="5" Spacing="8">
+            <Button Content="Validate booking" Command="{Binding ValidateBookingCommand}" />
+            <TextBlock Text="{Binding ValidationMessage}" TextWrapping="Wrap"
+                       AutomationProperties.LiveSetting="Polite" />
+        </StackPanel>
     </Grid>
 
 </Window>

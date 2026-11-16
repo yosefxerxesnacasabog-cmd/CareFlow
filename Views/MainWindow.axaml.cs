@@ -16,7 +16,7 @@ public partial class MainWindow : Window
     {
         if (DataContext is MainViewModel viewModel)
         {
-            await viewModel.RefreshAvailabilityAsync();
+            await viewModel.InitializeAsync();
         }
     }
 }
