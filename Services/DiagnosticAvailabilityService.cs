@@ -20,15 +20,21 @@ public sealed class DiagnosticAvailabilityService(IDbContextFactory<CareFlowDbCo
         {
             await using var db = await contextFactory.CreateDbContextAsync(cancellationToken);
 
-            return await db.DiagnosticServices
-                .OrderBy(service => service.Name)
-                .Select(service => new DiagnosticServiceAvailability(
-                    service.Id,
-                    service.Name,
-                    service.DailyCapacity,
-                    Math.Max(0, service.DailyCapacity - service.BookingServices
-                        .Count(entry => entry.Booking.BookingDate == date))))
+            return await QueryAvailability(db.DiagnosticServices, date)
                 .ToListAsync(cancellationToken);
         }, cancellationToken);
+    }
+
+    internal static IQueryable<DiagnosticServiceAvailability> QueryAvailability(
+        IQueryable<DiagnosticService> services, DateOnly date)
+    {
+        return services
+            .OrderBy(service => service.Name)
+            .Select(service => new DiagnosticServiceAvailability(
+                service.Id,
+                service.Name,
+                service.DailyCapacity,
+                Math.Max(0, service.DailyCapacity - service.BookingServices
+                    .Count(entry => entry.Booking.BookingDate == date))));
     }
 }

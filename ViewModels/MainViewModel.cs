@@ -14,7 +14,8 @@ namespace CareFlow.ViewModels;
 
 public partial class MainViewModel(
     DiagnosticAvailabilityService availabilityService,
-    PatientLookupService patientLookupService) : ViewModelBase
+    PatientLookupService patientLookupService,
+    BookingConfirmationService bookingConfirmationService) : ViewModelBase
 {
     private CancellationTokenSource? availabilityRequest;
 
@@ -42,6 +43,9 @@ public partial class MainViewModel(
     [ObservableProperty]
     public partial string? ValidationMessage { get; private set; }
 
+    [ObservableProperty]
+    public partial bool IsConfirming { get; private set; }
+
     partial void OnSelectedDateChanged(DateTimeOffset? value)
     {
         ValidationMessage = null;
@@ -67,9 +71,9 @@ public partial class MainViewModel(
     }
 
     [RelayCommand]
-    private void ValidateBooking()
+    private async Task ConfirmBookingAsync()
     {
-        if (IsLoadingAvailability)
+        if (IsLoadingAvailability || IsConfirming)
         {
             ValidationMessage = "Wait for the diagnostic services to finish loading.";
             return;
@@ -81,9 +85,39 @@ public partial class MainViewModel(
         var serviceIds = Availability.Where(option => option.IsSelected)
             .Select(option => option.Availability.ServiceId)
             .ToArray();
-        ValidationMessage = BookingRequestValidator.Validate(
-            SelectedPatient?.Id, date, serviceIds, DateOnly.FromDateTime(DateTime.Today))
-            ?? "Booking details are valid.";
+        var patientId = SelectedPatient?.Id;
+        var validationError = BookingRequestValidator.Validate(
+            patientId, date, serviceIds, DateOnly.FromDateTime(DateTime.Today));
+        if (validationError is not null)
+        {
+            ValidationMessage = validationError;
+            return;
+        }
+
+        IsConfirming = true;
+        ValidationMessage = "Confirming booking…";
+
+        try
+        {
+            var result = await bookingConfirmationService.ConfirmAsync(
+                patientId!.Value, date!.Value, serviceIds);
+            if (result.BookingId.HasValue)
+            {
+                foreach (var option in Availability)
+                {
+                    option.IsSelected = false;
+                }
+            }
+
+            await RefreshAvailabilityAsync();
+            ValidationMessage = result.BookingId is { } bookingId
+                ? $"Booking #{bookingId} confirmed."
+                : result.ErrorMessage;
+        }
+        finally
+        {
+            IsConfirming = false;
+        }
     }
 
     [RelayCommand(AllowConcurrentExecutions = true)]

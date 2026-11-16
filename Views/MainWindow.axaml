@@ -13,7 +13,7 @@
     <Grid Margin="24" RowDefinitions="Auto,Auto,Auto,Auto,*,Auto" RowSpacing="14">
         <TextBlock Text="Diagnostic booking" FontSize="22" FontWeight="SemiBold" />
 
-        <StackPanel Grid.Row="1" Spacing="4">
+        <StackPanel Grid.Row="1" Spacing="4" IsEnabled="{Binding !IsConfirming}">
             <StackPanel Orientation="Horizontal" Spacing="12">
                 <TextBlock Text="Patient" VerticalAlignment="Center" />
                 <ComboBox ItemsSource="{Binding Patients}"
@@ -30,7 +30,7 @@
             <TextBlock Text="{Binding PatientMessage}" TextWrapping="Wrap" />
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12">
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12" IsEnabled="{Binding !IsConfirming}">
             <TextBlock Text="Booking date" VerticalAlignment="Center" />
             <DatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
                         AutomationProperties.Name="Booking date" />
@@ -47,7 +47,8 @@
             <StackPanel Spacing="8">
                 <TextBlock Text="{Binding AvailabilityMessage}" TextWrapping="Wrap" />
                 <ItemsControl ItemsSource="{Binding Availability}"
-                              IsVisible="{Binding !IsLoadingAvailability}">
+                              IsVisible="{Binding !IsLoadingAvailability}"
+                              IsEnabled="{Binding !IsConfirming}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:BookingServiceOption">
                             <Grid ColumnDefinitions="*,130,120" ColumnSpacing="12" Margin="0,0,0,4">
@@ -65,7 +66,7 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="5" Spacing="8">
-            <Button Content="Validate booking" Command="{Binding ValidateBookingCommand}" />
+            <Button Content="Confirm booking" Command="{Binding ConfirmBookingCommand}" />
             <TextBlock Text="{Binding ValidationMessage}" TextWrapping="Wrap"
                        AutomationProperties.LiveSetting="Polite" />
         </StackPanel>

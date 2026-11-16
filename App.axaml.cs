@@ -24,6 +24,7 @@ public partial class App : Application
                 .AddDbContextFactory<CareFlowDbContext>(CareFlowDbContextFactory.ConfigureSqlite)
                 .AddSingleton<DiagnosticAvailabilityService>()
                 .AddSingleton<PatientLookupService>()
+                .AddSingleton<BookingConfirmationService>()
                 .AddSingleton<MainViewModel>()
                 .AddSingleton<MainWindow>(provider => new MainWindow
                 {
