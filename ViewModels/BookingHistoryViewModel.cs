@@ -19,10 +19,14 @@ public partial class BookingHistoryViewModel(BookingHistoryService historyServic
     [ObservableProperty]
     public partial string? Message { get; private set; }
 
+    [ObservableProperty]
+    public partial bool IsLoading { get; private set; }
+
     [RelayCommand]
     public async Task RefreshAsync()
     {
         var version = ++refreshVersion;
+        IsLoading = true;
         Message = "Loading booking history…";
 
         try
@@ -41,6 +45,13 @@ public partial class BookingHistoryViewModel(BookingHistoryService historyServic
             {
                 Entries = [];
                 Message = "Could not load booking history. Check that the database is initialized, then refresh.";
+            }
+        }
+        finally
+        {
+            if (version == refreshVersion)
+            {
+                IsLoading = false;
             }
         }
     }

@@ -47,7 +47,14 @@ public partial class MainViewModel(
     public partial string? ValidationMessage { get; private set; }
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSelectPatient))]
     public partial bool IsConfirming { get; private set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanSelectPatient))]
+    public partial bool IsLoadingPatients { get; private set; }
+
+    public bool CanSelectPatient => !IsLoadingPatients && !IsConfirming;
 
     partial void OnSelectedDateChanged(DateTimeOffset? value)
     {
@@ -61,6 +68,7 @@ public partial class MainViewModel(
 
     private async Task LoadPatientsAsync()
     {
+        IsLoadingPatients = true;
         try
         {
             Patients = await patientLookupService.GetPatientsAsync();
@@ -70,6 +78,10 @@ public partial class MainViewModel(
         {
             Trace.TraceError(error.ToString());
             PatientMessage = "Could not load patients. Check that the database is initialized, then reopen CareFlow.";
+        }
+        finally
+        {
+            IsLoadingPatients = false;
         }
     }
 
@@ -128,7 +140,10 @@ public partial class MainViewModel(
     public async Task RefreshAvailabilityAsync()
     {
         availabilityRequest?.Cancel();
-        ValidationMessage = null;
+        if (!IsConfirming)
+        {
+            ValidationMessage = null;
+        }
 
         if (SelectedDate is not { } selectedDate)
         {
@@ -161,7 +176,7 @@ public partial class MainViewModel(
                     };
                     option.PropertyChanged += (_, args) =>
                     {
-                        if (args.PropertyName == nameof(BookingServiceOption.IsSelected))
+                        if (!IsConfirming && args.PropertyName == nameof(BookingServiceOption.IsSelected))
                         {
                             ValidationMessage = null;
                         }

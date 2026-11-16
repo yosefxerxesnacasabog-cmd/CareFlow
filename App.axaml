@@ -1,15 +1,45 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="CareFlow.App"
              xmlns:local="using:CareFlow"
+             x:Class="CareFlow.App"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="CareFlowHeaderBrush">#084C47</SolidColorBrush>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="CareFlowBackgroundBrush">#EEF4F3</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowSurfaceBrush">#FFFFFF</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowTableHeaderBrush">#F2F7F6</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowBorderBrush">#D3E1DE</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowMutedBrush">#3E5455</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowSlotBackgroundBrush">#E1F4EF</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowSlotForegroundBrush">#13584F</SolidColorBrush>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="CareFlowBackgroundBrush">#142221</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowSurfaceBrush">#1C2E2C</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowTableHeaderBrush">#243C38</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowBorderBrush">#38524E</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowMutedBrush">#B7CFCA</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowSlotBackgroundBrush">#264B43</SolidColorBrush>
+                    <SolidColorBrush x:Key="CareFlowSlotForegroundBrush">#A7E8D8</SolidColorBrush>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 
     <Application.DataTemplates>
         <local:ViewLocator />
     </Application.DataTemplates>
 
     <Application.Styles>
-        <FluentTheme />
+        <FluentTheme>
+            <FluentTheme.Palettes>
+                <ColorPaletteResources x:Key="Light" Accent="#087268" />
+                <ColorPaletteResources x:Key="Dark" Accent="#61C9BA" />
+            </FluentTheme.Palettes>
+        </FluentTheme>
     </Application.Styles>
 </Application>
