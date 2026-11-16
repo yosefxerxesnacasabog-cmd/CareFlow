@@ -1,22 +1,47 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:CareFlow.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:models="using:CareFlow.Models"
         x:Class="CareFlow.Views.MainWindow"
         x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="CareFlow">
+        Title="CareFlow"
+        Width="700" Height="450"
+        MinWidth="530" MinHeight="300"
+        x:CompileBindings="True">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainViewModel />
-    </Design.DataContext>
+    <Grid Margin="24" RowDefinitions="Auto,Auto,Auto,*" RowSpacing="16">
+        <TextBlock Text="Diagnostic service availability" FontSize="22" FontWeight="SemiBold" />
 
-    <TextBox Text="{Binding Greeting}"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12">
+            <TextBlock Text="Date" VerticalAlignment="Center" />
+            <DatePicker SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                        AutomationProperties.Name="Availability date" />
+            <Button Content="Refresh" Command="{Binding RefreshAvailabilityCommand}" />
+        </StackPanel>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,130,120" ColumnSpacing="12">
+            <TextBlock Text="Diagnostic service" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="1" Text="Daily capacity" FontWeight="SemiBold" />
+            <TextBlock Grid.Column="2" Text="Remaining slots" FontWeight="SemiBold" />
+        </Grid>
+
+        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="8">
+                <TextBlock Text="{Binding AvailabilityMessage}" TextWrapping="Wrap" />
+                <ItemsControl ItemsSource="{Binding Availability}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:DiagnosticServiceAvailability">
+                            <Grid ColumnDefinitions="*,130,120" ColumnSpacing="12" Margin="0,0,0,8">
+                                <TextBlock Text="{Binding Name}" TextWrapping="Wrap" />
+                                <TextBlock Grid.Column="1" Text="{Binding DailyCapacity}" />
+                                <TextBlock Grid.Column="2" Text="{Binding RemainingSlots}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 
 </Window>

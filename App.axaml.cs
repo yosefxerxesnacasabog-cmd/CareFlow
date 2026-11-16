@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CareFlow.Data;
+using CareFlow.Services;
 using CareFlow.ViewModels;
 using CareFlow.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ public partial class App : Application
         {
             var services = new ServiceCollection()
                 .AddDbContextFactory<CareFlowDbContext>(CareFlowDbContextFactory.ConfigureSqlite)
+                .AddSingleton<DiagnosticAvailabilityService>()
                 .AddSingleton<MainViewModel>()
                 .AddSingleton<MainWindow>(provider => new MainWindow
                 {
